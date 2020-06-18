@@ -1,0 +1,42 @@
+1.1.0(2020.04.21)
+————————————————————
+1.戻り値の型をNSStringからIntに変更
+  getCurrentBattery: function(success, error)
+2.戻り値をNSStringからIntに変更：
+  notifyGetFrequencyHoppingModeLevelTo: function(listener, error)
+3.エラーメッセージの内容を修正しました。
+4.下記のメソッドを削除しました。
+  setRfidPcEpcDataWithRssiListener: function(listener)
+  setRfidEpcDataWithRssiListener: function(listener)
+  setRfidEpcDataWithTidListener: function(listener)
+5.下記のメソッドを追加しました。
+  readBarcodeContinuously: function(success, error)
+
+1.0.0(2019.11.14)
+————————————————————
+使用しない不要なAPIの削除と一部APIを追加しました。
+
+
+0.0.11
+————————————————————
+xmlファイルの下記の内容を削除しました。
+<header-file src="src/ios/RcpLib/PhyUtility.h" />
+<source-file src="src/ios/RcpLib/PhyUtility.m" />
+
+0.0.10
+————————————————————
+■ 共通
+  コールバックメソッドにcallbackIDは空の状態かどうかの判断を追加しました。
+
+0.0.9
+————————————————————
+■ 以下のメソッドを追加：
+  setBarcodeChargingControl: function(success, error, isOn);
+■ 以下のファイルを削除：
+  PhyUtility.h
+  PhyUtility.m
+
+0.0.8
+————————————————————
+■ 以下のメソッドを追加：
+  barcodePowerOnAndConfigure: function(success, error, beepOn, viberationOn, illuminationOn);

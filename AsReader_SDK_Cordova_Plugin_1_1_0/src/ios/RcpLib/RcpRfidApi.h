@@ -1,0 +1,212 @@
+//
+//  RcpApi.h
+//  AreteAudio
+//
+//  Created by Asterisk on 2013. 3. 18..
+//  Copyright (c) 2013 Asterisk. All rights reserved.
+//
+#import <Foundation/Foundation.h>
+
+
+@protocol RcpRfidDelegate;
+
+@interface RcpRfidApi : NSObject
+
+@property (nonatomic,assign,readonly) BOOL isDefaultTriggerOn;
+@property (nonatomic,assign) int scanCount;
+@property (nonatomic,assign) int scanTime;
+@property (nonatomic,assign) int scanCycle;
+
+- (void)setTriggerModeDefault:(BOOL)isDefault;
+
+- (NSString*)getSDKVersion;
+- (int)getBatteryValue;
+- (id)init;
+- (BOOL)open;
+- (BOOL)isOpened;
+- (void)close;
+- (BOOL)setReaderPower:(BOOL)on;
+- (BOOL)setReaderPower:(BOOL)on connectedBeep:(BOOL)connectedBeep;
+- (void)setReaderPowerOnWithBeep:(uint8_t)beepOn
+                  setVibration:(uint8_t)vibrationOn
+               setIllumination:(uint8_t)illuminationOn;
+
+- (BOOL)setBeep:(uint8_t)beepOn
+   setVibration:(uint8_t)vibrationOn
+setIllumination:(uint8_t)illuminationOn;
+- (BOOL)startReadTags:(uint8_t)mtnu mtime:(uint8_t)mtime repeatCycle:(uint16_t)repeatCycle;
+- (BOOL)startReadTagsWithRssi:(uint8_t)mtnu mtime:(uint8_t)mtime repeatCycle:(uint16_t)repeatCycle;
+- (BOOL)startReadTagsWithTid:(uint8_t)mtnu mtime:(uint8_t)mtime repeatCycle:(uint16_t)repeatCycle;
+- (BOOL)startReadTagsRFM:(uint8_t)codeType mtnu:(uint8_t)mtnu mtime:(uint8_t)mtime repeatCycle:(uint16_t)repeatCycle;
+- (BOOL)stopReadTags;
+- (BOOL)getReaderInfo;
+- (BOOL)getReaderInfo:(uint8_t)infoType;
+- (BOOL)getRegion;
+- (BOOL)getSelectParam;
+- (BOOL)setSelectParam:(uint8_t)target 
+	action:(uint8_t)action 
+	memoryBank:(uint8_t)memoryBank 
+	pointer:(uint32_t)pointer 
+	length:(uint8_t)length 
+	truncate:(uint8_t)truncate 
+	mask:(NSData *)mask;
+- (BOOL)getChannel;
+- (BOOL)setChannel:(uint8_t)channel
+     channelOffset:(uint8_t)channelOffset;
+- (BOOL)getFhLbtParam;
+- (BOOL)setFhLbtParam:(uint16_t)readTime 
+		idleTime:(uint16_t)idleTime 
+		carrierSenseTime:(uint16_t) carrierSenseTime 
+		rfLevel:(uint16_t)rfLevel 
+		frequencyHopping:(uint8_t)frequencyHopping 
+		listenBeforeTalk:(uint8_t)listenBeforeTalk 
+		continuousWave:(uint8_t)continuousWave;
+- (BOOL)getOutputPowerLevel;
+- (BOOL)setOutputPowerLevel:(uint16_t)power;
+- (BOOL)readFromTagMemory:(uint32_t)accessPassword
+		epc:(NSData*)epc
+		memoryBank:(uint8_t)memoryBank
+		startAddress:(uint16_t)startAddress
+		dataLength:(uint16_t)dataLength;
+- (BOOL)getFreqHoppingTable;
+- (BOOL)setFreqHoppingTable:(uint8_t)tableSize
+		channels:(NSData*)channels;
+- (BOOL)getSession;
+- (BOOL)setSession:(uint8_t)session;
+- (BOOL)getAnticollision;
+- (BOOL)setAnticollision:(uint8_t)mode;
+- (BOOL)setAnticollision:(uint8_t)mode qStart:(uint8_t)qStart qMax:(uint8_t)qMax qMin:(uint8_t)qMin;
+- (BOOL)setAnticollision:(uint8_t)mode qStart:(uint8_t)qStart qMax:(uint8_t)qMax qMin:(uint8_t)qMin count:(uint8_t)count;
+- (BOOL)writeToTagMemory:(uint32_t)accessPassword
+		epc:(NSData*)epc
+		memoryBank:(uint8_t)memoryBank
+		startAddress:(uint16_t)startAddress
+		dataToWrite:(NSData*)dataToWrite;
+- (BOOL)killTag:(uint32_t)killPassword
+		epc:(NSData*)epc;
+- (BOOL)lockTagMemory:(uint32_t)accessPassword
+		epc:(NSData*)epc
+		lockData:(uint32_t)lockData;
+- (BOOL)getRssi;
+-(BOOL) setStopConditionMtnu:(uint8_t)mtnu
+                    setMtime:(uint8_t)mtime
+              setRepeatCycle:(uint16_t)repeatCycle;
+-(BOOL)getStopCondition;
+- (BOOL)setOptimumFrequencyHoppingTable;
+-(BOOL) GetFrequencyHoppingMode;
+- (BOOL)SetFrequencyHoppingMode:(uint8_t)mode;
+- (BOOL)updateRegistry;
+
+- (BOOL)writeToTagMemory:(NSData*)epc
+        dataToWriteAscii:(NSString*)dataToWrite;
+- (BOOL)writeToTagMemory:(NSData*)epc
+          dataToWriteHex:(NSString*)dataToWrite;
+
+- (BOOL) setChargingControl:(BOOL)isOn;
+
+// RED4S
+
+/**
+ *  @brief      Send the "Set RSSI Threshold value" command to the reader
+ *  @details    Change RSSI Threshold value (Threshold value)
+ *  @param      threshold :  0 = oDbm , 50 = -50dBm
+ *  @return     YES : Success  / NO: Range error
+ */
+- (BOOL)setRSSIThreshold:(uint16_t)threshold;
+
+
+/**
+ *  @brief      Send the "Request RSSI Threshold value" command to the reader
+ *  @details    Request RSSI Threshold value
+ *  @param      None
+ *  @return     YES
+ */
+
+- (BOOL)getRSSIThreshold;
+
+
+
+
+
+
+@property (nonatomic, assign) NSInteger ProtocolType;
+@property (nonatomic, assign) BOOL isConnected;
+@property (atomic, retain) id<RcpRfidDelegate> delegate;
+@end
+
+@protocol RcpRfidDelegate <NSObject>
+@optional
+- (void)pluggedRfid:(BOOL)plug;
+- (void)pcEpcReceived:(NSData *)pcEpc;
+- (void)epcReceived:(NSData *)epc;
+- (void)epcReceived:(NSData *)epc rssi:(int8_t)rssi;
+- (void)epcReceived:(NSData *)epc tid:(NSData*)tid;
+- (void)pcEpcRssiReceived:(NSData *)pcEpc rssi:(int8_t)rssi;
+- (void)pcEpcSensorDataReceived:(NSData *)pcEpc sensorValue:(double)sensorValue rssi:(int8_t)rssi;
+- (void)pcEpcSensorDataReceived:(NSData *)pcEpc sensorData:(NSData *)sensorData;
+- (void)readerConnected:(uint8_t)status;
+- (void)readerConnected;
+- (void)errReceived:(uint8_t)errCode;
+- (void)errDetailReceived:(NSData *)errCode;
+- (void)readerInfoReceived:(NSData *)data;
+- (void)readerInfoReceivedWithDict:(NSDictionary *)info;
+- (void)frequencyHoppingModeReceived:(uint8_t)statusCode;
+- (void)regionReceived:(uint8_t)region;
+- (void)selectParamReceived:(NSData *)selParam;
+- (void)channelReceived:(uint8_t)channel channelOffset:(uint8_t)channelOffset;
+- (void)fhLbtReceived:(NSData *)fhLb;
+- (void)tagMemoryReceived:(NSData *)data;
+- (void)hoppingTableReceived:(NSData *)table;
+- (void)anticolParamReceived:(uint8_t)param;
+- (void)anticolParamReceived:(uint8_t)mode start:(uint8_t)start max:(uint8_t)max min:(uint8_t)min;
+- (void)rssiReceived:(uint16_t)rssi;
+- (void)batteryChargeReceived:(int)battery;
+- (void)startedReadTags:(uint8_t)statusCode;
+- (void)startedReadTagsWithRssi:(uint8_t)statusCode;
+- (void)didSetOutputPowerLevel:(uint8_t)status;
+- (void)writedReceived:(uint8_t)statusCode;
+- (void)stoppedReadTags:(uint8_t)statusCode;
+- (void)lockedReceived:(uint8_t)statusCode;
+- (void)killedReceived:(uint8_t)statusCode;
+- (void)didSetSelParamReceived:(uint8_t)statusCode;
+- (void)didSetChParamReceived:(uint8_t)statusCode;
+- (void)didSetFhLbtReceived:(uint8_t)statusCode;
+- (void)didSetHoppintTbleReceived:(uint8_t)statusCode;
+- (void)didSetAntiColModeReceived:(uint8_t)statusCode;
+- (void)sessionReceived:(uint8_t)session;
+- (void)didSetStopConditionMtnu:(uint8_t)statusCode;
+- (void)stopConditionReceived:(NSData *)data;
+- (void)didSetOptiFreqHPTable:(uint8_t)statusCode;
+- (void)didSetFreqHPTable:(uint8_t)statusCode;
+- (void)didSetFreqHPMode:(uint8_t)statusCode;
+- (void)didSetSession:(uint8_t)statusCode;
+- (void)feedbackParamReceived:(uint8_t)lpf res1:(uint8_t)res1 res2:(uint8_t)res2;
+- (void)updatedRegistry:(uint8_t)statusCode;
+- (void)outputPowerLevelReceived:(uint16_t)power max:(uint16_t)maxPower min:(uint16_t)minPower;
+- (void)txPowerLevelReceived:(NSData*)power;
+
+/**
+ *  @brief      Response of "Get RSSI Threshold value" for RED4S
+ *  @details    receive RSSI Thres hold value
+ *  @param      threshold : value ex)50 =>  -50dBm
+ */
+- (void)rssiThresholdReceived:(uint16_t)threshold;
+
+- (void)ackReceived:(uint8_t)commandCode;
+
+//RCP_CMD_CHARGING_CONTROL
+- (void)chargingControlReceived:(BOOL)isON;
+
+/**
+ *  @brief      [Customer Mode] Response of trigger button on reader
+ *  @details    This function is called when the trigger button of the reader is pressed.
+ */
+- (void)pushedTriggerButton;
+
+/**
+ *  @brief      [Customer Mode] Response of trigger button on reader
+ *  @details    This function is called when the trigger button of the reader is released.
+ */
+- (void)releasedTriggerButton;
+@end
+

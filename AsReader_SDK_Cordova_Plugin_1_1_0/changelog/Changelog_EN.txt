@@ -1,0 +1,41 @@
+1.1.0(2020.04.21)
+————————————————————
+1.The return value type is changed from NSString to Int:
+  getCurrentBattery: function(success, error)
+2.The return value is changed from "NSString" to Int type:
+  notifyGetFrequencyHoppingModeLevelTo: function(listener, error)
+3.The error message is modified.
+4.Delete functions：
+  setRfidPcEpcDataWithRssiListener: function(listener)
+  setRfidEpcDataWithRssiListener: function(listener)
+  setRfidEpcDataWithTidListener: function(listener)
+5.Add fuctions：
+  readBarcodeContinuously: function(success, error)
+
+1.0.0(2019.11.14)
+————————————————————
+Added some APIs; and removed some APIs that were no longer in use.
+
+0.0.11
+————————————————————
+The following was removed from the .XML file.
+<header-file src="src/ios/RcpLib/PhyUtility.h" />
+<source-file src="src/ios/RcpLib/PhyUtility.m" />
+
+0.0.10
+————————————————————
+■ Common:
+Add processing to the callback function to get whether the callbackID is empty.
+
+0.0.9
+————————————————————
+■ Add the following method:
+setBarcodeChargingControl: function(success, error, isOn);
+■ Delete the following files:
+PhyUtility.h
+PhyUtility.m
+
+0.0.8
+————————————————————
+■ Add the following method:
+barcodePowerOnAndConfigure: function(success, error, beepOn, viberationOn, illuminationOn);
